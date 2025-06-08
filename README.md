@@ -7,6 +7,8 @@ This project contains a simple carbon footprint calculator, implemented in Pytho
 ---
 
 ## 📁 Project Structure
+
+
 carbon_calculator_project/
 ├── carbon_calculator_6 # Web executable file (HTML)
 ├── python origin code.pdf # Archived source code in PDF format
