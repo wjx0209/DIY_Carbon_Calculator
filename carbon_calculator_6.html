@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>LCC STUDENT personal carbon footprint calculator</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 40px; 
+      background-color: #f9f9f9; 
+    }
+    h1 { 
+      color: #2a7ae2; 
+      text-align: center; 
+    }
+    h3 { 
+      color: #444; 
+    }
+    label { 
+      display: block; 
+      margin-top: 10px; 
+      font-size: 14px; 
+    }
+    input[type="number"], input[type="checkbox"], select { 
+      padding: 5px; 
+    }
+    input[type="number"] { 
+      width: 100px; 
+      border: 1px solid #ccc; 
+      border-radius: 4px; 
+    }
+    button { 
+      margin-top: 20px; 
+      padding: 10px 20px; 
+      background-color: #2a7ae2; 
+      color: white; 
+      border: none; 
+      border-radius: 4px; 
+      cursor: pointer; 
+    }
+    button:hover { 
+      background-color: #1a5bb2; 
+    }
+    .result { 
+      margin-top: 30px; 
+      font-weight: bold; 
+      background-color: #fff; 
+      padding: 15px; 
+      border: 1px solid #ddd; 
+      border-radius: 4px; 
+    }
+    .section { 
+      margin-bottom: 20px; 
+      background-color: #fff; 
+      padding: 15px; 
+      border: 1px solid #ddd; 
+      border-radius: 4px; 
+    }
+    .transport-type { 
+      margin-top: 15px; 
+      padding-top: 10px; 
+      border-top: 1px dashed #eee; 
+    }
+    .month-selector {
+      margin-left: 10px;
+      font-size: 12px;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <h1>LCC STUDENT personal carbon footprint calculator（per month）</h1>
+
+  <div class="section">
+    <h3>服装</h3>
+    <label>本月购买衣物数量（件）：
+      <input type="number" id="numClothes" value="0" min="0">
+    </label>
+    <label>是否计算洗涤阶段的排放？
+      <input type="checkbox" id="includeWashing">
+    </label>
+    <label>每件衣物本月洗涤次数（次）：
+      <input type="number" id="washesPerCloth" value="0" min="0" disabled>
+    </label>
+  </div>
+
+  <div class="section">
+    <h3>食品</h3>
+    <label>本月素餐用餐次数（餐）：
+      <input type="number" id="mealsVeggie" value="0" min="0">
+    </label>
+    <label>本月荤餐用餐次数（餐）：
+      <input type="number" id="mealsMeat" value="0" min="0">
+    </label>
+    <label>本月外卖份数（份）：
+      <input type="number" id="takeoutMeals" value="0" min="0">
+    </label>
+  </div>
+
+  <div class="section">
+    <h3>住房</h3>
+    <label>本月宿舍用电量（kWh）：
+      <input type="number" id="electricityKwh" value="0" min="0">
+    </label>
+    <label>宿舍面积（平方米，单人分摊）：
+      <input type="number" id="dormArea" value="0" min="0">
+    </label>
+    <label>本月在学院使用电脑时长（小时）：
+      <input type="number" id="computerHours" value="0" min="0">
+    </label>
+    <label>电脑功率（W，默认60W）：
+      <input type="number" id="computerWattage" value="60" min="0">
+    </label>
+  </div>
+
+  <div class="section">
+    <h3>交通</h3>
+    
+    <div class="transport-type">
+      <h4>公共交通</h4>
+      <label>本月公交/地铁出行次数（次）：
+        <input type="number" id="busTrips" value="0" min="0">
+      </label>
+      <label>公交/地铁平均单次出行距离（公里）：
+        <input type="number" id="busMetroAvgDistance" value="0" min="0">
+      </label>
+      <label>本月共享单车出行次数（次）：
+        <input type="number" id="bikeTrips" value="0" min="0">
+      </label>
+      <label>共享单车平均单次出行距离（公里）：
+        <input type="number" id="bikeAvgDistance" value="0" min="0">
+      </label>
+    </div>
+    
+    <div class="transport-type">
+      <h4>打车/网约车</h4>
+      <label>本月打车出行次数（次）：
+        <input type="number" id="taxiTrips" value="0" min="0">
+      </label>
+      <label>打车平均单次出行距离（公里）：
+        <input type="number" id="taxiAvgDistance" value="0" min="0">
+      </label>
+      <label>车辆类型：
+        <select id="taxiType">
+          <option value="gasoline">汽油车（1.6L以下）</option>
+          <option value="diesel">柴油车</option>
+          <option value="ev">纯电动车</option>
+        </select>
+      </label>
+    </div>
+    
+    <div class="transport-type">
+      <h4>班车/电动车</h4>
+      <label>本月乘坐班车次数（次）：
+        <input type="number" id="shuttleTrips" value="0" min="0">
+      </label>
+      <label>本月电动车出行次数（次）：
+        <input type="number" id="ebikeTrips" value="0" min="0">
+      </label>
+      <label>电动车平均单次出行距离（公里）：
+        <input type="number" id="ebikeAvgDistance" value="0" min="0">
+      </label>
+    </div>
+    
+    <div class="transport-type">
+      <h4>高铁旅行</h4>
+      <label>高铁旅行月份：
+        <select id="hsrMonth" class="month-selector">
+          <option value="0">非本月旅行</option>
+          <option value="1">1月</option>
+          <option value="2">2月</option>
+          <option value="3">3月</option>
+          <option value="4">4月</option>
+          <option value="5">5月</option>
+          <option value="6">6月</option>
+          <option value="7">7月</option>
+          <option value="8">8月</option>
+          <option value="9">9月</option>
+          <option value="10">10月</option>
+          <option value="11">11月</option>
+          <option value="12">12月</option>
+        </select>
+      </label>
+      <label>本月高铁出行次数（次）：
+        <input type="number" id="hsrTrips" value="0" min="0">
+      </label>
+      <label>高铁平均单次出行距离（公里）：
+        <input type="number" id="hsrAvgDistance" value="0" min="0">
+      </label>
+    </div>
+    
+    <div class="transport-type">
+      <h4>航空旅行</h4>
+      <label>本月国内航班次数（次）：
+        <input type="number" id="domesticFlights" value="0" min="0">
+      </label>
+      <label>平均单次飞行距离（公里）：
+        <input type="number" id="domesticFlightDistance" value="0" min="0">
+      </label>
+      <label>舱位类型：
+        <select id="domesticCabin">
+          <option value="economy">经济舱</option>
+          <option value="business">商务舱/头等舱</option>
+        </select>
+      </label>
+      
+      <label>本月国际航班次数（次）：
+        <input type="number" id="internationalFlights" value="0" min="0">
+      </label>
+      <label>平均单次飞行距离（公里）：
+        <input type="number" id="internationalFlightDistance" value="0" min="0">
+      </label>
+      <label>舱位类型：
+        <select id="internationalCabin">
+          <option value="economy">经济舱</option>
+          <option value="business">商务舱/头等舱</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>回收利用</h3>
+    <label>本月回收塑料制品重量（kg）：
+      <input type="number" id="recycledPlastic" value="0" min="0">
+    </label>
+    <label>本月回收纸张重量（kg）：
+      <input type="number" id="recycledPaper" value="0" min="0">
+    </label>
+    <label>本月回收金属制品重量（kg）：
+      <input type="number" id="recycledMetal" value="0" min="0">
+    </label>
+    <label>本月回收纸箱重量（kg）：
+      <input type="number" id="recycledCardboard" value="0" min="0">
+    </label>
+  </div>
+
+  <button onclick="calculateEmissions()">计算碳排放</button>
+
+  <div class="result" id="result"></div>
+
+  <div class="footer">
+    <h3>工具说明</h3>
+    <p>此碳排放核算工具针对学生日常生活中的各类活动，建立了清晰的排放边界。它专为上海交通大学中英低碳学院学生设计，具有面向学生群体的通用性。</p>
+    <p>用户可根据自身情况以及手机记录的活动数据，结合本工具提供的单位排放因子，计算并得出个人每月的碳排放总量。</p>
+    <p>本工具基于相关研究数据开发，排放因子来源包括：CPCD数据库、上海市碳排放核算指南、中国民航局数据及相关学术研究成果。</p>
+  </div>
+
+  <script>
+    const EMISSION_FACTORS = {
+      // 服装
+      clothing_production: 7.0,// kgCO2e per piece (cotton T-shirt, production phase CPCD 2021)
+      clothing_transport: 0.5, // kgCO2e per piece (transportation to gate CPCD 2021)
+      clothing_washing_electricity: 0.2,// kgCO2e per wash (electricity for washing machine)
+      clothing_washing_detergent: 0.1,  // kgCO2e per wash (detergent production and transport)
+      
+      // 食品
+      food_production_veggie: 0.6, // kgCO2e per veggie meal (CPCD 2019)
+      food_production_meat: 1.0,// kgCO2e per meat meal (CPCD 2019)
+      food_transport: 0.1,// kgCO2e per meal
+      food_cooking: 0.1167,// kgCO2e per meal(0.2 * 0.5834;我估算了一下每餐用电0.2kwh)
+      food_waste: 0.05,// kgCO2e per meal
+      takeout_packaging: 1.6758, // kgCO2e per takeout meal (一份排骨套餐外卖：1.6758KgCO2eq /kg。数据来源《全国高校食堂堂食浪费概况及其外卖碳足迹研究—基于30 省(市)30 所高校的9660 份问卷调查-朱强，李丰，钱壮》)
+      
+      // 住房
+      housing_electricity: 0.5834,// kgCO2e per kWh (Shanghai CPCD 2024)
+      housing_heating: 0.0,//上海无集中供暖，所以是0，但我为了保证代码的可扩展性，还是保留了这一项，这样可以计算别的）
+      
+      // 交通 - 公共交通
+      transport_bus_metro: 0.05,// kgCO2e per km (bus/metro) (https://www.carbonindependent.org/20.html)
+      transport_bike: 0.0,
+      transport_shuttle: 0.08, // kgCO2e per km (班车排放因子)
+      transport_ebike: 0.02, // kgCO2e per km (电动车排放因子)
+      transport_hsr_electricity: 0.0188, // kgCO2e per km (京沪高铁百公里电耗3.216kWh，乘以电力排放因子0.5834kgCO2e/kWh，数据来源《京津冀城际铁路全寿命周期能耗、碳排放及节能减排研究_薛静》)
+      
+      // 交通 - 打车/网约车（来自Lia的数据）
+      transport_taxi_gasoline: 0.25,   // 汽油车（1.6L以下）<<上海市交通行业碳排放核算指南>>
+      transport_taxi_diesel: 0.29,     // 柴油车<<上海市交通行业碳排放核算指南>>
+      transport_taxi_ev: 0.085,        // 纯电动车（取中值）<<上海市交通行业碳排放核算指南>>
+      
+      // 交通 - 航空（来自Lia数据）
+      transport_flight_domestic_economy: 0.14,//中国民航局2021年数据
+      transport_flight_domestic_business: 0.28,  // 经济舱的2倍
+      transport_flight_international_economy: 0.21,  // 已含RFI系数(IPCC 2019)
+      transport_flight_international_business: 0.42,   // 经济舱的2倍
+      
+      // 回收利用
+      recycling_plastic: -1.5, // kgCO2e per kg (负值表示减排)
+      recycling_paper: -0.8,   // kgCO2e per kg
+      recycling_metal: -2.0,   // kgCO2e per kg
+      recycling_cardboard: -0.992 // kgCO2e per kg (排放因子0.992kge/kg)
+    };
+
+    // 启用/禁用洗涤次数输入框
+    document.getElementById("includeWashing").addEventListener("change", function() {
+      document.getElementById("washesPerCloth").disabled = !this.checked;
+    });
+
+    function calculateEmissions() {
+      // 服装
+      const clothes = parseFloat(document.getElementById("numClothes").value) || 0;
+      const includeWashing = document.getElementById("includeWashing").checked;
+      const washesPerCloth = parseFloat(document.getElementById("washesPerCloth").value) || 0;
+      let clothing = clothes * (EMISSION_FACTORS.clothing_production + EMISSION_FACTORS.clothing_transport);
+      let washingElectricity = 0;
+      if (includeWashing) {
+        const totalWashes = clothes * washesPerCloth;
+        washingElectricity = totalWashes * EMISSION_FACTORS.clothing_washing_electricity;
+        const washingDetergent = totalWashes * EMISSION_FACTORS.clothing_washing_detergent;
+        clothing += washingElectricity + washingDetergent;
+      }
+
+      // 食品
+      const mealsVeggie = parseFloat(document.getElementById("mealsVeggie").value) || 0;
+      const mealsMeat = parseFloat(document.getElementById("mealsMeat").value) || 0;
+      const takeoutMeals = parseFloat(document.getElementById("takeoutMeals").value) || 0;
+      const totalMeals = mealsVeggie + mealsMeat;
+      const food = (mealsVeggie * EMISSION_FACTORS.food_production_veggie) +
+                   (mealsMeat * EMISSION_FACTORS.food_production_meat) +
+                   (totalMeals * EMISSION_FACTORS.food_transport) +
+                   (totalMeals * EMISSION_FACTORS.food_cooking) +
+                   (totalMeals * EMISSION_FACTORS.food_waste) +
+                   (takeoutMeals * EMISSION_FACTORS.takeout_packaging);
+
+      // 住房
+      const electricity = parseFloat(document.getElementById("electricityKwh").value) || 0;
+      const dorm = parseFloat(document.getElementById("dormArea").value) || 0;
+      const computerHours = parseFloat(document.getElementById("computerHours").value) || 0;
+      const computerWattage = parseFloat(document.getElementById("computerWattage").value) || 60;
+      const computerElectricity = computerHours * computerWattage / 1000; // 转换为kWh
+      
+      const housingElectricity = Math.max(0, (electricity * EMISSION_FACTORS.housing_electricity) - washingElectricity);
+      const housing = housingElectricity + 
+                     (dorm * EMISSION_FACTORS.housing_heating) +
+                     (computerElectricity * EMISSION_FACTORS.housing_electricity);
+
+      // 交通 - 公共交通
+      const busTrips = parseFloat(document.getElementById("busTrips").value) || 0;
+      const busMetroAvgDistance = parseFloat(document.getElementById("busMetroAvgDistance").value) || 0;
+      const bikeTrips = parseFloat(document.getElementById("bikeTrips").value) || 0;
+      const bikeAvgDistance = parseFloat(document.getElementById("bikeAvgDistance").value) || 0;
+      const busMetroKm = busTrips * busMetroAvgDistance;
+      const bikeKm = bikeTrips * bikeAvgDistance;
+      const publicTransport = (busMetroKm * EMISSION_FACTORS.transport_bus_metro) + 
+                              (bikeKm * EMISSION_FACTORS.transport_bike);
+
+      // 交通 - 打车/网约车
+      const taxiTrips = parseFloat(document.getElementById("taxiTrips").value) || 0;
+      const taxiAvgDistance = parseFloat(document.getElementById("taxiAvgDistance").value) || 0;
+      const taxiType = document.getElementById("taxiType").value;
+      const taxiFactor = EMISSION_FACTORS[`transport_taxi_${taxiType}`];
+      const taxiKm = taxiTrips * taxiAvgDistance;
+      const taxiTransport = taxiKm * taxiFactor;
+
+      // 交通 - 班车/电动车
+      const shuttleTrips = parseFloat(document.getElementById("shuttleTrips").value) || 0;
+      const shuttleKm = shuttleTrips * 12; // 固定12公里/次
+      const shuttleTransport = shuttleKm * EMISSION_FACTORS.transport_shuttle;
+      
+      const ebikeTrips = parseFloat(document.getElementById("ebikeTrips").value) || 0;
+      const ebikeAvgDistance = parseFloat(document.getElementById("ebikeAvgDistance").value) || 0;
+      const ebikeKm = ebikeTrips * ebikeAvgDistance;
+      const ebikeTransport = ebikeKm * EMISSION_FACTORS.transport_ebike;
+
+      // 交通 - 高铁
+      const hsrMonth = parseInt(document.getElementById("hsrMonth").value) || 0;
+      const hsrTrips = parseFloat(document.getElementById("hsrTrips").value) || 0;
+      const hsrAvgDistance = parseFloat(document.getElementById("hsrAvgDistance").value) || 0;
+      let hsrTransport = 0;
+      if (hsrMonth > 0) { // 只有当选择了月份时才计算
+        const hsrKm = hsrTrips * hsrAvgDistance;
+        hsrTransport = hsrKm * EMISSION_FACTORS.transport_hsr_electricity;
+      }
+
+      // 交通 - 航空
+      const domesticFlights = parseFloat(document.getElementById("domesticFlights").value) || 0;
+      const domesticFlightDistance = parseFloat(document.getElementById("domesticFlightDistance").value) || 0;
+      const domesticCabin = document.getElementById("domesticCabin").value;
+      const domesticFactor = EMISSION_FACTORS[`transport_flight_domestic_${domesticCabin}`];
+      const domesticFlightKm = domesticFlights * domesticFlightDistance;
+      const domesticFlightEmission = domesticFlightKm * domesticFactor;
+
+      const internationalFlights = parseFloat(document.getElementById("internationalFlights").value) || 0;
+      const internationalFlightDistance = parseFloat(document.getElementById("internationalFlightDistance").value) || 0;
+      const internationalCabin = document.getElementById("internationalCabin").value;
+      const internationalFactor = EMISSION_FACTORS[`transport_flight_international_${internationalCabin}`];
+      const internationalFlightKm = internationalFlights * internationalFlightDistance;
+      const internationalFlightEmission = internationalFlightKm * internationalFactor;
+
+      const airTransport = domesticFlightEmission + internationalFlightEmission;
+
+      // 总交通排放
+      const transport = publicTransport + taxiTransport + shuttleTransport + ebikeTransport + hsrTransport + airTransport;
+
+      // 回收利用
+      const recycledPlastic = parseFloat(document.getElementById("recycledPlastic").value) || 0;
+      const recycledPaper = parseFloat(document.getElementById("recycledPaper").value) || 0;
+      const recycledMetal = parseFloat(document.getElementById("recycledMetal").value) || 0;
+      const recycledCardboard = parseFloat(document.getElementById("recycledCardboard").value) || 0;
+      const recycling = (recycledPlastic * EMISSION_FACTORS.recycling_plastic) +
+                        (recycledPaper * EMISSION_FACTORS.recycling_paper) +
+                        (recycledMetal * EMISSION_FACTORS.recycling_metal) +
+                        (recycledCardboard * EMISSION_FACTORS.recycling_cardboard);
+
+      // 总排放
+      const total = clothing + food + housing + transport + recycling;
+
+      // 输出结果
+      document.getElementById("result").innerHTML = `
+        <h3>详细排放分析</h3>
+        <strong>服装排放：</strong>${clothing.toFixed(2)} kg CO₂e<br>
+        <strong>食品排放：</strong>${food.toFixed(2)} kg CO₂e<br>
+        <strong>住房排放：</strong>${housing.toFixed(2)} kg CO₂e<br>
+        <h4>交通排放细分：</h4>
+        • 公共交通：${publicTransport.toFixed(2)} kg CO₂e<br>
+        • 打车/网约车：${taxiTransport.toFixed(2)} kg CO₂e<br>
+        • 班车：${shuttleTransport.toFixed(2)} kg CO₂e<br>
+        • 电动车：${ebikeTransport.toFixed(2)} kg CO₂e<br>
+        • 高铁：${hsrTransport.toFixed(2)} kg CO₂e<br>
+        • 航空旅行：${airTransport.toFixed(2)} kg CO₂e<br>
+        <strong>总交通排放：</strong>${transport.toFixed(2)} kg CO₂e<br>
+        <strong>回收利用减排：</strong>${recycling.toFixed(2)} kg CO₂e<br>
+        <br>
+        <h3>总碳排放：${total.toFixed(2)} kg CO₂e</h3>
+        <p>电脑用电量计算：${computerHours}小时 × ${computerWattage}W = ${computerElectricity.toFixed(2)} kWh</p>
+        <p>班车总里程：${shuttleTrips}次 × 12公里 = ${shuttleKm}公里</p>`;
+    }
+  </script>
+</body>
+</html>
